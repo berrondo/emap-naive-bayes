@@ -2,7 +2,7 @@
 """
 Created on Fri Nov 18 20:37:08 2011
 
-@author: Claudio
+@author: Claudio, Debora, Gerson
 """
 
 from numpy import loadtxt
@@ -13,8 +13,8 @@ arq_treinamento = 'treinamento.csv'
 
 with open(arq_treinamento, 'rb') as arq:
     cabecalhos = csv.reader(arq, delimiter=';').next()
-    palavras = [palavra.strip('\'"') for palavra in cabecalhos]
     
+palavras = [palavra.strip('\'"') for palavra in cabecalhos]
 palavras = zip(range(len(palavras)), palavras)
 
 SPAM_OU_NAO = 0 # coluna onde as msgs estao classificadas como spam ou nao

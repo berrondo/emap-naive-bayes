@@ -20,7 +20,8 @@ with open(arq_treinamento, 'rb') as arq:
 palavras = [palavra.strip('\'"') for palavra in cabecalhos]
 palavras = zip(range(len(palavras)), palavras)
 
-SPAM_OU_NAO = 0 # coluna onde as msgs estao classificadas como spam ou nao
+# coluna onde as msgs estao classificadas como spam ou nao:
+SPAM = 0
 
 # obtendo os dados para treinamento como um ndarray:
 treinamento = loadtxt(arq_treinamento, skiprows=1, delimiter=';')
@@ -33,24 +34,27 @@ numero_de_spams = len([spam for spam in treinamento[:,SPAM_OU_NAO] if spam])
 P_de_ser_spam = 1.0*numero_de_spams / espaco_amostral
 P_de_nao_ser_spam = 1.0 - P_de_ser_spam
 
-P_da_palavra = {}
-P_da_palavra_NAO_SPAM = {}
+# contando as palavras:
+P_da_palavra_em_spam = {}
+P_da_palavra_em_nao_spam = {}
 for linha in range(espaco_amostral):
     for coluna, palavra in palavras:
-        if treinamento[linha,SPAM_OU_NAO] == 1:
-            if treinamento[linha,coluna]:
-                P_da_palavra[palavra] = P_da_palavra.get(palavra, 0) + 1
-        else:
-            if treinamento[linha,coluna]:
-                P_da_palavra_NAO_SPAM[palavra] = P_da_palavra_NAO_SPAM.get(palavra, 0) + 1           
+        
+        # se a palavra esta presente...
+        if treinamento[linha,coluna]:
+            # em um spam...
+            if treinamento[linha,SPAM]:
+                P_da_palavra_em_spam[palavra] = P_da_palavra_em_spam.get(palavra, 0) + 1
+            # ou nao spam:
+            else:
+                P_da_palavra_em_nao_spam[palavra] = P_da_palavra_em_nao_spam.get(palavra, 0) + 1           
 
-for palavra, Count_da_palavra in P_da_palavra.items():
-    P_da_palavra[palavra] = (1.0 * Count_da_palavra / espaco_amostral) / P_de_ser_spam
-    print palavra, P_da_palavra[palavra]
+# calculando as probabilidades para cada palavra:
+for palavra, N_da_palavra in P_da_palavra_em_spam.items():
+    P_da_palavra_em_spam[palavra] = (1.0 * N_da_palavra / espaco_amostral) / P_de_ser_spam
     
-for palavra, Count_da_palavra in P_da_palavra_NAO_SPAM.items():
-    P_da_palavra_NAO_SPAM[palavra] = (1.0 * Count_da_palavra / espaco_amostral) / P_de_nao_ser_spam
-    print palavra, P_da_palavra_NAO_SPAM[palavra]
+for palavra, N_da_palavra in P_da_palavra_em_nao_spam.items():
+    P_da_palavra_em_nao_spam[palavra] = (1.0 * N_da_palavra / espaco_amostral) / P_de_nao_ser_spam
 
 
 # obtendo dados para classificar:  
@@ -61,8 +65,8 @@ for linha in range(len(teste)):
         lista_spam = []
         lista_nao_spam = []
         if teste[linha,coluna]:
-            lista_spam.append(P_da_palavra[palavra])
-            lista_nao_spam.append(P_da_palavra_NAO_SPAM[palavra])
+            lista_spam.append(P_da_palavra_em_spam[palavra])
+            lista_nao_spam.append(P_da_palavra_em_nao_spam[palavra])
             P_spam_dado_palavras = reduce(mul, lista_spam)*P_de_ser_spam
             P_nao_spam_dado_palavras = reduce(mul, lista_nao_spam)*P_de_nao_ser_spam
             r = P_spam_dado_palavras / P_nao_spam_dado_palavras

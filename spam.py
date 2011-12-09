@@ -28,7 +28,7 @@ treinamento = loadtxt(arq_treinamento, skiprows=1, delimiter=';')
 
 # tamanho do espaco amostral e quantidade de spams:
 espaco_amostral = len(treinamento)
-numero_de_spams = len([spam for spam in treinamento[:,SPAM] if spam])
+numero_de_spams = list(treinamento[:,SPAM]).count(1.0)
 
 # probabilidades de ser e nao ser spam:
 P_de_ser_spam = 1.0*numero_de_spams / espaco_amostral
@@ -64,6 +64,8 @@ for linha in range(len(teste)):
     for coluna, palavra in palavras[1:]:
         lista_spam = []
         lista_nao_spam = []
+        
+        # se a palavra esta presente...
         if teste[linha,coluna]:
             lista_spam.append(P_da_palavra_em_spam[palavra])
             lista_nao_spam.append(P_da_palavra_em_nao_spam[palavra])

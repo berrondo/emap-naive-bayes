@@ -35,8 +35,8 @@ P_de_ser_spam = 1.0*numero_de_spams / espaco_amostral
 P_de_nao_ser_spam = 1.0 - P_de_ser_spam
 
 # contando as palavras:
-P_da_palavra_em_spam = {}
-P_da_palavra_em_nao_spam = {}
+P_em_spam = {}
+P_em_nao_spam = {}
 for linha in range(espaco_amostral):
     for coluna, palavra in palavras:
         
@@ -44,17 +44,17 @@ for linha in range(espaco_amostral):
         if treinamento[linha,coluna]:
             # em um spam...
             if treinamento[linha,SPAM]:
-                P_da_palavra_em_spam[palavra] = P_da_palavra_em_spam.get(palavra, 0) + 1
+                P_em_spam[palavra] = P_em_spam.get(palavra, 0) + 1
             # ou nao spam:
             else:
-                P_da_palavra_em_nao_spam[palavra] = P_da_palavra_em_nao_spam.get(palavra, 0) + 1           
+                P_em_nao_spam[palavra] = P_em_nao_spam.get(palavra, 0) + 1           
 
 # calculando as probabilidades para cada palavra:
-for palavra, N_da_palavra in P_da_palavra_em_spam.items():
-    P_da_palavra_em_spam[palavra] = (1.0 * N_da_palavra / espaco_amostral) / P_de_ser_spam
+for palavra, N_da_palavra in P_em_spam.items():
+    P_em_spam[palavra] = (1.0 * N_da_palavra / espaco_amostral) / P_de_ser_spam
     
-for palavra, N_da_palavra in P_da_palavra_em_nao_spam.items():
-    P_da_palavra_em_nao_spam[palavra] = (1.0 * N_da_palavra / espaco_amostral) / P_de_nao_ser_spam
+for palavra, N_da_palavra in P_em_nao_spam.items():
+    P_em_nao_spam[palavra] = (1.0 * N_da_palavra / espaco_amostral) / P_de_nao_ser_spam
 
 
 # obtendo dados para classificar:  
@@ -67,8 +67,9 @@ for linha in range(len(teste)):
         
         # se a palavra esta presente...
         if teste[linha,coluna]:
-            lista_spam.append(P_da_palavra_em_spam[palavra])
-            lista_nao_spam.append(P_da_palavra_em_nao_spam[palavra])
+            lista_spam.append(P_em_spam[palavra])
+            lista_nao_spam.append(P_em_nao_spam[palavra])
+
             P_spam_dado_palavras = reduce(mul, lista_spam)*P_de_ser_spam
             P_nao_spam_dado_palavras = reduce(mul, lista_nao_spam)*P_de_nao_ser_spam
             r = P_spam_dado_palavras / P_nao_spam_dado_palavras

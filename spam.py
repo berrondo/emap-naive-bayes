@@ -28,7 +28,7 @@ treinamento = loadtxt(arq_treinamento, skiprows=1, delimiter=';')
 
 # tamanho do espaco amostral e quantidade de spams:
 espaco_amostral = len(treinamento)
-numero_de_spams = len([spam for spam in treinamento[:,SPAM_OU_NAO] if spam])
+numero_de_spams = len([spam for spam in treinamento[:,SPAM] if spam])
 
 # probabilidades de ser e nao ser spam:
 P_de_ser_spam = 1.0*numero_de_spams / espaco_amostral

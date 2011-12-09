@@ -58,8 +58,6 @@ for da_palavra, N_da_palavra in P_em_nao_spam.items():
 class Relatorio:
     ACERTOS_EM_SPAM = 0
     ACERTOS_EM_NAO_SPAM = 0
-    ERROS_EM_SPAM = 0
-    ERROS_EM_NAO_SPAM = 0
     
     def __init__(self, total_de_mensagens, numero_de_spams):
         self.total_de_mensagens = total_de_mensagens
@@ -76,27 +74,27 @@ class Relatorio:
                 self.ACERTOS_EM_SPAM += 1
             else:
                 msg = errou
-                self.ERROS_EM_SPAM += 1
         if not Spam:
             if r < 1.0:
                 msg = acertou
                 self.ACERTOS_EM_NAO_SPAM += 1
             else:
                 msg = errou
-                self.ERROS_EM_NAO_SPAM += 1
         return "%s %s %s" % (msg, Spam, r)
         
     def __str__(self):
         msg = "\n"
         msg += "em um total de %s mensagens:\n" % self.total_de_mensagens
-        msg += "%s acertos e %s erros em %s spams (%.3f%% de acerto)\n" % (self.ACERTOS_EM_SPAM, 
-                                                                           self.ERROS_EM_SPAM, 
-                                                                           self.numero_de_spams, 
-                                                                           self.percentual_de_acertos_em_spam)
-        msg += "%s acertos e %s erros em %s NAO spams (%.3f%% de acerto)\n" % (self.ACERTOS_EM_NAO_SPAM, 
-                                                                               self.ERROS_EM_NAO_SPAM, 
-                                                                               self.numero_de_nao_spams, 
-                                                                               self.percentual_de_acertos_em_nao_spam)
+        msg += "%s acertos e %s erros em %s spams (%.2f%% correto)\n" % (
+                                                    self.ACERTOS_EM_SPAM, 
+                                                    self.numero_de_spams-self.ACERTOS_EM_SPAM, 
+                                                    self.numero_de_spams, 
+                                                    self.percentual_de_acertos_em_spam)
+        msg += "%s acertos e %s erros em %s NAO spams (%.2f%% correto)\n" % (
+                                                    self.ACERTOS_EM_NAO_SPAM, 
+                                                    self.numero_de_nao_spams-self.ACERTOS_EM_NAO_SPAM, 
+                                                    self.numero_de_nao_spams, 
+                                                    self.percentual_de_acertos_em_nao_spam)
         return msg
         
     @property
@@ -124,7 +122,7 @@ for linha in range(total_de_mensagens_no_teste):
     for coluna, da_palavra in palavras[1:]:
         # ...presente na mensagem...
         if teste[linha,coluna]:
-            # ...multiplica suas probabilidades em spam e nao spam:
+            # ...multiplica suas probabilidades para spam e nao spam:
             Produtorio_spam *= P_em_spam[da_palavra]
             Produtorio_nao_spam *= P_em_nao_spam[da_palavra]
 

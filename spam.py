@@ -55,36 +55,38 @@ for palavra, N_da_palavra in P_em_spam.items():
 for palavra, N_da_palavra in P_em_nao_spam.items():
     P_em_nao_spam[palavra] = (1.0 * N_da_palavra / espaco_amostral) / P_de_nao_ser_spam
 
-class Acertou:
+class Relatorio:
     ACERTOS_EM_SPAM = 0
     ACERTOS_EM_NAO_SPAM = 0
     ERROS_EM_SPAM = 0
     ERROS_EM_NAO_SPAM = 0
 
     def __call__(self, Spam, r):
+        msg = ""
         if Spam:
             if r >= 1.0:
-                print "ACERTOU!",
+                msg = "ACERTOU!"
                 self.ACERTOS_EM_SPAM += 1
             else:
-                print "errou...",
+                msg = "errou..."
                 self.ERROS_EM_SPAM += 1
         if not Spam:
             if r < 1.0:
-                print "ACERTOU!",
+                msg = "ACERTOU!"
                 self.ACERTOS_EM_NAO_SPAM += 1
             else:
-                print "errou...",
+                msg = "errou..."
                 self.ERROS_EM_NAO_SPAM += 1
-        print Spam, r
+        return "%s %s %s" % (msg, Spam, r)
         
-    def relatorio(self, total_de_mensagens, total_de_spams):
-        print
-        print "em um total de", len(teste), "mensagens:"
-        print self.ACERTOS_EM_SPAM, "acertos e", self.ERROS_EM_SPAM, "erros em", total_de_spams, "spams"
-        print self.ACERTOS_EM_NAO_SPAM, "acertos e", self.ERROS_EM_NAO_SPAM, "erros em", total_de_mensagens-total_de_spams, "NAO spams"
+    def final(self, total_de_mensagens, total_de_spams):
+        msg = "\n"
+        msg += "em um total de %s mensagens:\n" % total_de_mensagens
+        msg += "%s acertos e %s erros em %s spams\n" % (self.ACERTOS_EM_SPAM, self.ERROS_EM_SPAM, total_de_spams)
+        msg += "%s acertos e %s erros em %s NAO spams\n" % (self.ACERTOS_EM_NAO_SPAM, self.ERROS_EM_NAO_SPAM, total_de_mensagens-total_de_spams)
+        return msg
 
-acertou = Acertou()
+relatorio = Relatorio()
 
 # obtendo dados para classificar:  
 teste = loadtxt(arq_teste, skiprows=1, delimiter=';')
@@ -110,6 +112,6 @@ for linha in range(total_de_mensagens_no_teste):
     
     # acertou?
     print linha,
-    acertou(teste[linha,0], r)
+    print relatorio(teste[linha,0], r)
 
-acertou.relatorio(total_de_mensagens_no_teste, numero_de_spams_no_teste)
+print relatorio.final(total_de_mensagens_no_teste, numero_de_spams_no_teste)

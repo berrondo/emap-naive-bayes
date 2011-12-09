@@ -46,7 +46,7 @@ for linha in range(espaco_amostral):
                 P_em_spam[palavra] = P_em_spam.get(palavra, 0) + 1
             # ou nao spam:
             else:
-                P_em_nao_spam[palavra] = P_em_nao_spam.get(palavra, 0) + 1           
+                P_em_nao_spam[palavra] = P_em_nao_spam.get(palavra, 0) + 1
 
 # calculando as probabilidades para cada palavra:
 for palavra, N_da_palavra in P_em_spam.items():
@@ -60,6 +60,11 @@ class Relatorio:
     ACERTOS_EM_NAO_SPAM = 0
     ERROS_EM_SPAM = 0
     ERROS_EM_NAO_SPAM = 0
+    
+    def __init__(self, total_de_mensagens, numero_de_spams):
+        self.total_de_mensagens = total_de_mensagens
+        self.numero_de_spams = numero_de_spams
+        self.numero_de_nao_spams = total_de_mensagens - numero_de_spams
 
     def __call__(self, Spam, r):
         msg = ""
@@ -79,19 +84,20 @@ class Relatorio:
                 self.ERROS_EM_NAO_SPAM += 1
         return "%s %s %s" % (msg, Spam, r)
         
-    def final(self, total_de_mensagens, total_de_spams):
+    def __str__(self):
         msg = "\n"
-        msg += "em um total de %s mensagens:\n" % total_de_mensagens
-        msg += "%s acertos e %s erros em %s spams\n" % (self.ACERTOS_EM_SPAM, self.ERROS_EM_SPAM, total_de_spams)
-        msg += "%s acertos e %s erros em %s NAO spams\n" % (self.ACERTOS_EM_NAO_SPAM, self.ERROS_EM_NAO_SPAM, total_de_mensagens-total_de_spams)
+        msg += "em um total de %s mensagens:\n" % self.total_de_mensagens
+        msg += "%s acertos e %s erros em %s spams\n" % (self.ACERTOS_EM_SPAM, self.ERROS_EM_SPAM, self.numero_de_spams)
+        msg += "%s acertos e %s erros em %s NAO spams\n" % (self.ACERTOS_EM_NAO_SPAM, self.ERROS_EM_NAO_SPAM, self.numero_de_nao_spams)
         return msg
 
-relatorio = Relatorio()
 
 # obtendo dados para classificar:  
 teste = loadtxt(arq_teste, skiprows=1, delimiter=';')
 total_de_mensagens_no_teste = len(teste)
 numero_de_spams_no_teste = list(teste[:,SPAM]).count(1.0)
+
+acertou = Relatorio(total_de_mensagens_no_teste, numero_de_spams_no_teste)
 
 for linha in range(total_de_mensagens_no_teste):
     Produtorio_spam = 1.0
@@ -111,7 +117,6 @@ for linha in range(total_de_mensagens_no_teste):
     r = P_spam_dado_palavras / P_nao_spam_dado_palavras
     
     # acertou?
-    print linha,
-    print relatorio(teste[linha,0], r)
+    print linha, acertou(teste[linha,0], r)
 
-print relatorio.final(total_de_mensagens_no_teste, numero_de_spams_no_teste)
+print acertou

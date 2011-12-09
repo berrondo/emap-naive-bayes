@@ -55,18 +55,43 @@ for palavra, N_da_palavra in P_em_spam.items():
 for palavra, N_da_palavra in P_em_nao_spam.items():
     P_em_nao_spam[palavra] = (1.0 * N_da_palavra / espaco_amostral) / P_de_nao_ser_spam
 
+class Acertou:
+    ACERTOS_EM_SPAM = 0
+    ACERTOS_EM_NAO_SPAM = 0
+    ERROS_EM_SPAM = 0
+    ERROS_EM_NAO_SPAM = 0
 
-def acertou(linha, Spam, r):
-    if (r > 1.0 and Spam) or (r < 1.0 and not Spam):
-        print "ACERTOU!",
-    else:
-        print "errou...",
-    print linha, Spam, r
+    def __call__(self, Spam, r):
+        if Spam:
+            if r >= 1.0:
+                print "ACERTOU!",
+                self.ACERTOS_EM_SPAM += 1
+            else:
+                print "errou...",
+                self.ERROS_EM_SPAM += 1
+        if not Spam:
+            if r < 1.0:
+                print "ACERTOU!",
+                self.ACERTOS_EM_NAO_SPAM += 1
+            else:
+                print "errou...",
+                self.ERROS_EM_NAO_SPAM += 1
+        print Spam, r
+        
+    def relatorio(self, total_de_mensagens, total_de_spams):
+        print
+        print "em um total de", len(teste), "mensagens:"
+        print self.ACERTOS_EM_SPAM, "acertos e", self.ERROS_EM_SPAM, "erros em", total_de_spams, "spams"
+        print self.ACERTOS_EM_NAO_SPAM, "acertos e", self.ERROS_EM_NAO_SPAM, "erros em", total_de_mensagens-total_de_spams, "NAO spams"
+
+acertou = Acertou()
 
 # obtendo dados para classificar:  
 teste = loadtxt(arq_teste, skiprows=1, delimiter=';')
+total_de_mensagens_no_teste = len(teste)
+numero_de_spams_no_teste = list(teste[:,SPAM]).count(1.0)
 
-for linha in range(len(teste)):
+for linha in range(total_de_mensagens_no_teste):
     Produtorio_spam = 1.0
     Produtorio_nao_spam = 1.0
 
@@ -82,4 +107,9 @@ for linha in range(len(teste)):
     
     # razao entre ser ou nao ser spam:
     r = P_spam_dado_palavras / P_nao_spam_dado_palavras
-    acertou(linha, teste[linha,0], r)
+    
+    # acertou?
+    print linha,
+    acertou(teste[linha,0], r)
+
+acertou.relatorio(total_de_mensagens_no_teste, numero_de_spams_no_teste)

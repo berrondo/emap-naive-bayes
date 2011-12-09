@@ -7,7 +7,6 @@ Created on Fri Nov 18 20:37:08 2011
 
 import csv
 from numpy import loadtxt
-from operator import mul
 
 # arquivos csv para treinamento e teste:
 arq_teste = 'teste.csv'
@@ -57,20 +56,30 @@ for palavra, N_da_palavra in P_em_nao_spam.items():
     P_em_nao_spam[palavra] = (1.0 * N_da_palavra / espaco_amostral) / P_de_nao_ser_spam
 
 
+def acertou(linha, Spam, r):
+    if (r > 1.0 and Spam) or (r < 1.0 and not Spam):
+        print "ACERTOU!",
+    else:
+        print "errou...",
+    print linha, Spam, r
+
 # obtendo dados para classificar:  
 teste = loadtxt(arq_teste, skiprows=1, delimiter=';')
 
 for linha in range(len(teste)):
+    Produtorio_spam = 1.0
+    Produtorio_nao_spam = 1.0
+
     for coluna, palavra in palavras[1:]:
-        lista_spam = []
-        lista_nao_spam = []
-        
         # se a palavra esta presente...
         if teste[linha,coluna]:
-            lista_spam.append(P_em_spam[palavra])
-            lista_nao_spam.append(P_em_nao_spam[palavra])
+            Produtorio_spam *= P_em_spam[palavra]
+            Produtorio_nao_spam *= P_em_nao_spam[palavra]
 
-            P_spam_dado_palavras = reduce(mul, lista_spam)*P_de_ser_spam
-            P_nao_spam_dado_palavras = reduce(mul, lista_nao_spam)*P_de_nao_ser_spam
-            r = P_spam_dado_palavras / P_nao_spam_dado_palavras
-            print teste[linha,0], r
+    # totaliza para cada linha/mensagem:
+    P_spam_dado_palavras = Produtorio_spam * P_de_ser_spam
+    P_nao_spam_dado_palavras = Produtorio_nao_spam * P_de_nao_ser_spam
+    
+    # razao entre ser ou nao ser spam:
+    r = P_spam_dado_palavras / P_nao_spam_dado_palavras
+    acertou(linha, teste[linha,0], r)

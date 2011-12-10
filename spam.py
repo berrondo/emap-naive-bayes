@@ -14,10 +14,7 @@ arq_treinamento = 'treinamento.csv'
 
 # obtendo do cabecalho as palavras:
 with open(arq_treinamento, 'rb') as arq:
-    cabecalhos = csv.reader(arq, delimiter=';').next()
-    
-palavras = [palavra.strip('\'"') for palavra in cabecalhos]
-palavras = zip(range(len(palavras)), palavras)
+    palavras = [(n, palavra.strip('\'"')) for n, palavra in enumerate(csv.reader(arq, delimiter=';').next())]
 
 # coluna onde as msgs estao classificadas como spam ou nao:
 SPAM = 0
@@ -64,22 +61,22 @@ class Relatorio:
         self.numero_de_spams = numero_de_spams
         self.numero_de_nao_spams = total_de_mensagens - numero_de_spams
 
+    acertou = "ACERTOU!"
+    errou = "errou..."
     def __call__(self, Spam, r):
-        acertou = "ACERTOU!"
-        errou = "errou..."
         msg = ""
         if Spam:
             if r >= 1.0:
-                msg = acertou
+                msg = self.acertou
                 self.ACERTOS_EM_SPAM += 1
             else:
-                msg = errou
+                msg = self.errou
         if not Spam:
             if r < 1.0:
-                msg = acertou
+                msg = self.acertou
                 self.ACERTOS_EM_NAO_SPAM += 1
             else:
-                msg = errou
+                msg = self.errou
         return "%s %s %s" % (msg, Spam, r)
         
     def __str__(self):

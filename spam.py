@@ -16,6 +16,8 @@ class Palavra:
     def __init__(self, palavra, coluna):
         self.palavra = palavra.strip('\'"')
         self.coluna = coluna
+        self.em_spam = 0
+        self.em_nao_spam = 0
         
     def __hash__(self):
         return self.coluna
@@ -48,10 +50,10 @@ for linha in range(espaco_amostral):
         if treinamento[linha,palavra.coluna]:
             # em um spam...
             if treinamento[linha,SPAM]:
-                P_em_spam[palavra] = P_em_spam.get(palavra, 0) + 1
+                palavra.em_spam += 1
             # ou nao spam:
             else:
-                P_em_nao_spam[palavra] = P_em_nao_spam.get(palavra, 0) + 1
+                palavra.em_nao_spam += 1
 
 # calculando as probabilidades para cada palavra:
 for da_palavra, N_da_palavra in P_em_spam.items():

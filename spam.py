@@ -12,9 +12,14 @@ from numpy import loadtxt
 arq_teste = 'teste.csv'
 arq_treinamento = 'treinamento.csv'
 
+class Palavra:
+    def __init__(self, palavra, coluna):
+        self.palavra = palavra.strip('\'"')
+        self.coluna = coluna
+
 # obtendo do cabecalho as palavras:
 with open(arq_treinamento, 'rb') as arq:
-    palavras = [(n, palavra.strip('\'"')) for n, palavra in enumerate(csv.reader(arq, delimiter=';').next())]
+    palavras = [Palavra(palavra, n) for n, palavra in enumerate(csv.reader(arq, delimiter=';').next())]
 
 # coluna onde as msgs estao classificadas como spam ou nao:
 SPAM = 0
@@ -34,10 +39,10 @@ P_de_nao_ser_spam = 1.0 - P_de_ser_spam
 P_em_spam = {}
 P_em_nao_spam = {}
 for linha in range(espaco_amostral):
-    for coluna, da_palavra in palavras:
+    for palavra, da_palavra in palavras:
         
         # se a palavra esta presente...
-        if treinamento[linha,coluna]:
+        if treinamento[linha,palavra.coluna]:
             # em um spam...
             if treinamento[linha,SPAM]:
                 P_em_spam[da_palavra] = P_em_spam.get(da_palavra, 0) + 1

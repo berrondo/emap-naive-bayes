@@ -16,6 +16,9 @@ class Palavra:
     def __init__(self, palavra, coluna):
         self.palavra = palavra.strip('\'"')
         self.coluna = coluna
+        
+    def __hash__(self):
+        return self.coluna
 
 # obtendo do cabecalho as palavras:
 with open(arq_treinamento, 'rb') as arq:
@@ -39,16 +42,16 @@ P_de_nao_ser_spam = 1.0 - P_de_ser_spam
 P_em_spam = {}
 P_em_nao_spam = {}
 for linha in range(espaco_amostral):
-    for palavra, da_palavra in palavras:
+    for palavra in palavras:
         
         # se a palavra esta presente...
         if treinamento[linha,palavra.coluna]:
             # em um spam...
             if treinamento[linha,SPAM]:
-                P_em_spam[da_palavra] = P_em_spam.get(da_palavra, 0) + 1
+                P_em_spam[palavra] = P_em_spam.get(palavra, 0) + 1
             # ou nao spam:
             else:
-                P_em_nao_spam[da_palavra] = P_em_nao_spam.get(da_palavra, 0) + 1
+                P_em_nao_spam[palavra] = P_em_nao_spam.get(palavra, 0) + 1
 
 # calculando as probabilidades para cada palavra:
 for da_palavra, N_da_palavra in P_em_spam.items():
@@ -121,12 +124,12 @@ for linha in range(total_de_mensagens_no_teste):
     Produtorio_nao_spam = 1.0
 
     # para cada palavra...
-    for coluna, da_palavra in palavras[1:]:
+    for palavra in palavras[1:]:
         # ...presente na mensagem...
-        if teste[linha,coluna]:
+        if teste[linha,palavra.coluna]:
             # ...multiplica suas probabilidades para spam e nao spam:
-            Produtorio_spam *= P_em_spam[da_palavra]
-            Produtorio_nao_spam *= P_em_nao_spam[da_palavra]
+            Produtorio_spam *= P_em_spam[palavra]
+            Produtorio_nao_spam *= P_em_nao_spam[palavra]
 
     # em cada linha/mensagem, levando em conta as palavras...
     P_spam_dado_palavras = Produtorio_spam * P_de_ser_spam

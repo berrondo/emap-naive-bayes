@@ -8,10 +8,6 @@ Created on Fri Nov 18 20:37:08 2011
 import csv
 from numpy import loadtxt
 
-# arquivos csv para treinamento e teste:
-arq_teste = 'teste.csv'
-arq_treinamento = 'treinamento.csv'
-
 class Palavra:
     def __init__(self, palavra, coluna):
         self.palavra = palavra.strip('\'"')
@@ -21,6 +17,18 @@ class Palavra:
         
     def __hash__(self):
         return self.coluna
+        
+    @property
+    def P_em_spam(self):
+        return (1.0 * self.em_spam / espaco_amostral) / P_de_ser_spam
+        
+    @property
+    def P_em_nao_spam(self):
+        return (1.0 * self.em_nao_spam / espaco_amostral) / P_de_nao_ser_spam
+        
+# arquivos csv para treinamento e teste:
+arq_teste = 'teste.csv'
+arq_treinamento = 'treinamento.csv'
 
 # obtendo do cabecalho as palavras:
 with open(arq_treinamento, 'rb') as arq:
@@ -56,11 +64,11 @@ for linha in range(espaco_amostral):
                 palavra.em_nao_spam += 1
 
 # calculando as probabilidades para cada palavra:
-for da_palavra, N_da_palavra in P_em_spam.items():
-    P_em_spam[da_palavra] = (1.0 * N_da_palavra / espaco_amostral) / P_de_ser_spam
+# for da_palavra, N_da_palavra in P_em_spam.items():
+    # P_em_spam[da_palavra] = (1.0 * N_da_palavra / espaco_amostral) / P_de_ser_spam
     
-for da_palavra, N_da_palavra in P_em_nao_spam.items():
-    P_em_nao_spam[da_palavra] = (1.0 * N_da_palavra / espaco_amostral) / P_de_nao_ser_spam
+# for da_palavra, N_da_palavra in P_em_nao_spam.items():
+    # P_em_nao_spam[da_palavra] = (1.0 * N_da_palavra / espaco_amostral) / P_de_nao_ser_spam
 
 class Relatorio:
     ACERTOS_EM_SPAM = 0
@@ -130,8 +138,8 @@ for linha in range(total_de_mensagens_no_teste):
         # ...presente na mensagem...
         if teste[linha,palavra.coluna]:
             # ...multiplica suas probabilidades para spam e nao spam:
-            Produtorio_spam *= P_em_spam[palavra]
-            Produtorio_nao_spam *= P_em_nao_spam[palavra]
+            Produtorio_spam *= palavra.P_em_spam
+            Produtorio_nao_spam *= palavra.P_em_nao_spam
 
     # em cada linha/mensagem, levando em conta as palavras...
     P_spam_dado_palavras = Produtorio_spam * P_de_ser_spam

@@ -46,8 +46,6 @@ P_de_ser_spam = 1.0*numero_de_spams / espaco_amostral
 P_de_nao_ser_spam = 1.0 - P_de_ser_spam
 
 # contando as palavras:
-P_em_spam = {}
-P_em_nao_spam = {}
 for linha in range(espaco_amostral):
     for palavra in palavras:
         

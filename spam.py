@@ -8,55 +8,6 @@ Created on Fri Nov 18 20:37:08 2011
 import csv
 from numpy import loadtxt
 
-class Palavra:
-    def __init__(self, palavra, coluna):
-        self.palavra = palavra.strip('\'"')
-        self.coluna = coluna
-        self.em_spam = 0
-        self.em_nao_spam = 0
-
-    @property
-    def P_em_spam(self):
-        return (1.0 * self.em_spam / espaco_amostral) / P_de_ser_spam
-        
-    @property
-    def P_em_nao_spam(self):
-        return (1.0 * self.em_nao_spam / espaco_amostral) / P_de_nao_ser_spam
-        
-# arquivos csv para treinamento e teste:
-arq_teste = 'teste.csv'
-arq_treinamento = 'treinamento.csv'
-
-# obtendo do cabecalho as palavras:
-with open(arq_treinamento, 'rb') as arq:
-    palavras = [Palavra(palavra, n) for n, palavra in enumerate(csv.reader(arq, delimiter=';').next())]
-
-# coluna onde as msgs estao classificadas como spam ou nao:
-SPAM = 0
-
-# obtendo os dados para treinamento como um ndarray:
-treinamento = loadtxt(arq_treinamento, skiprows=1, delimiter=';')
-
-# tamanho do espaco amostral e quantidade de spams:
-espaco_amostral = len(treinamento)
-numero_de_spams = list(treinamento[:,SPAM]).count(1.0)
-
-# probabilidades de ser e nao ser spam:
-P_de_ser_spam = 1.0*numero_de_spams / espaco_amostral
-P_de_nao_ser_spam = 1.0 - P_de_ser_spam
-
-# contando as palavras:
-for linha in range(espaco_amostral):
-    for palavra in palavras:
-        
-        # se a palavra esta presente...
-        if treinamento[linha,palavra.coluna]:
-            # em um spam...
-            if treinamento[linha,SPAM]:
-                palavra.em_spam += 1
-            # ou nao spam:
-            else:
-                palavra.em_nao_spam += 1
 
 class Relatorio:
     ACERTOS_EM_SPAM = 0
@@ -101,6 +52,59 @@ class Relatorio:
         return msg
 
 
+class Palavra:
+    def __init__(self, palavra, coluna):
+        self.palavra = palavra.strip('\'"')
+        self.coluna = coluna
+        self.em_spam = 0
+        self.em_nao_spam = 0
+
+    @property
+    def P_em_spam(self):
+        return (1.0 * self.em_spam / espaco_amostral) / P_de_ser_spam
+        
+    @property
+    def P_em_nao_spam(self):
+        return (1.0 * self.em_nao_spam / espaco_amostral) / P_de_nao_ser_spam
+        
+        
+# arquivos csv para treinamento e teste:
+arq_teste = 'teste.csv'
+arq_treinamento = 'treinamento.csv'
+
+# obtendo do cabecalho as palavras:
+with open(arq_treinamento, 'rb') as arq:
+    palavras = [Palavra(palavra, n) for n, palavra in enumerate(csv.reader(arq, delimiter=';').next())]
+
+# coluna onde as msgs estao classificadas como spam ou nao:
+SPAM = 0
+
+# obtendo os dados para treinamento como um ndarray:
+treinamento = loadtxt(arq_treinamento, skiprows=1, delimiter=';')
+
+# tamanho do espaco amostral e quantidade de spams:
+espaco_amostral = len(treinamento)
+numero_de_spams = list(treinamento[:,SPAM]).count(1.0)
+
+# probabilidades de ser e nao ser spam:
+P_de_ser_spam = 1.0*numero_de_spams / espaco_amostral
+P_de_nao_ser_spam = 1.0 - P_de_ser_spam
+
+# contando as palavras:
+for linha in range(espaco_amostral):
+    for palavra in palavras:
+        
+        # se a palavra esta presente...
+        if treinamento[linha,palavra.coluna]:
+            # em um spam...
+            if treinamento[linha,SPAM]:
+                palavra.em_spam += 1
+            # ou nao spam:
+            else:
+                palavra.em_nao_spam += 1
+
+                
+                
 # obtendo dados para classificar:  
 teste = loadtxt(arq_teste, skiprows=1, delimiter=';')
 total_de_mensagens_no_teste = len(teste)

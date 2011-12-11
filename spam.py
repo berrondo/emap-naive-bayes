@@ -14,10 +14,7 @@ class Palavra:
         self.coluna = coluna
         self.em_spam = 0
         self.em_nao_spam = 0
-        
-    def __hash__(self):
-        return self.coluna
-        
+
     @property
     def P_em_spam(self):
         return (1.0 * self.em_spam / espaco_amostral) / P_de_ser_spam
@@ -62,13 +59,6 @@ for linha in range(espaco_amostral):
             # ou nao spam:
             else:
                 palavra.em_nao_spam += 1
-
-# calculando as probabilidades para cada palavra:
-# for da_palavra, N_da_palavra in P_em_spam.items():
-    # P_em_spam[da_palavra] = (1.0 * N_da_palavra / espaco_amostral) / P_de_ser_spam
-    
-# for da_palavra, N_da_palavra in P_em_nao_spam.items():
-    # P_em_nao_spam[da_palavra] = (1.0 * N_da_palavra / espaco_amostral) / P_de_nao_ser_spam
 
 class Relatorio:
     ACERTOS_EM_SPAM = 0

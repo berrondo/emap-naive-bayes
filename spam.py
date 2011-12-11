@@ -92,21 +92,13 @@ class Relatorio:
                                                     self.ACERTOS_EM_SPAM, 
                                                     self.numero_de_spams-self.ACERTOS_EM_SPAM, 
                                                     self.numero_de_spams, 
-                                                    self.percentual_de_acertos_em_spam)
+                                                    (1.0*self.ACERTOS_EM_SPAM / self.numero_de_spams) * 100)
         msg += "%s acertos e %s erros em %s NAO spams (%.2f%% correto)\n" % (
                                                     self.ACERTOS_EM_NAO_SPAM, 
                                                     self.numero_de_nao_spams-self.ACERTOS_EM_NAO_SPAM, 
                                                     self.numero_de_nao_spams, 
-                                                    self.percentual_de_acertos_em_nao_spam)
+                                                    (1.0*self.ACERTOS_EM_NAO_SPAM / self.numero_de_nao_spams) * 100)
         return msg
-        
-    @property
-    def percentual_de_acertos_em_spam(self):
-        return (1.0*self.ACERTOS_EM_SPAM / self.numero_de_spams) * 100
-        
-    @property
-    def percentual_de_acertos_em_nao_spam(self):
-        return (1.0*self.ACERTOS_EM_NAO_SPAM / self.numero_de_nao_spams) * 100
 
 
 # obtendo dados para classificar:  

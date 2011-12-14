@@ -4,6 +4,18 @@ Created on Fri Nov 18 20:37:08 2011
 
 @authors: Claudio, Debora, Gerson, Diego
 """
+"""
+    PI Lista 2:
+    5. O arquivo spam.xls contém dados relativos a  emails recebidos por um pesquisador, 
+    classificados como spam (1)  ou não spam (0). Para cada um dos emails foi tabulada a 
+    ocorrência ou não das palavras mais comuns.  Para este exercício, 10% das 
+    mensagens de cada tipo foram extraídas, para formar um conjunto de teste, enquanto 
+    as demais 90% permaneceram no conjunto de treinamento.  Utilizando o método 
+    “Naive Bayes”, classifique os emails do conjunto de teste em spam ou não.  Tabule os 
+    resultados, indicando o percentual de mensagens classificadas corretamente e 
+    incorretamente em cada grupo.   Envie um pequeno relatório para pcezar@, 
+    com os seus resultados e descrevendo como implementou o classificador. 
+  """
 
 import csv
 from numpy import loadtxt
